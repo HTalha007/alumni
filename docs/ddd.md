@@ -12,3 +12,18 @@ The platform connects Istanbul University students and alumni to facilitate prof
 - **Alumni :** A verified graduate of Istanbul University.
 - **Department :** Academic division the graduate completed.
 - **Seeder:** Automatic script populating initial verified graduate records.
+
+
+## Veritabanı Şeması (Database Schema)
+
+### Job Postings (İş İlanları - job_postings)
+* **id**: Integer (Primary Key)
+* **title**: String (İlan Başlığı)
+* **description**: Text (İlan Detayı)
+* **author_id**: Integer (Foreign Key -> users.id) - İlanı açan mezun
+
+### Applications (Başvurular - applications)
+* **id**: Integer (Primary Key)
+* **job_posting_id**: Integer (Foreign Key -> job_postings.id)
+* **applicant_id**: Integer (Foreign Key -> users.id) - Başvuran kişi
+* **cover_letter**: Text (Ön Yazı)

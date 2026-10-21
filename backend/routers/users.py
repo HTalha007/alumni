@@ -1,8 +1,19 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-from models import User, UserCreate
+from pydantic import BaseModel
+from models import UserCreate
 
-router = APIRouter(prefix="/api/users", tags=["Users"])
+# Prefix'i React frontend ile tam eşleşmesi için "/users" yaptık
+router = APIRouter(prefix="/users", tags=["Users"])
+
+# Dışarıya veri gönderirken kullanılacak Pydantic Çıktı Şeması
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str | None = None
+    graduation_year: str | int | None = None
+    department: str | None = None
+    title: str | None = None
 
 fake_users_db = [
     {
@@ -10,36 +21,38 @@ fake_users_db = [
         "name": "Ahmet Yılmaz",
         "email": "ahmet@alumni.istanbul.edu.tr",
         "graduation_year": 2021,
-        "department": "Management Information Systems"
+        "department": "Management Information Systems",
+        "title": "Software Engineer"
     },
     {
         "id": 2,
         "name": "Ayşe Kaya",
         "email": "ayse@alumni.istanbul.edu.tr",
         "graduation_year": 2023,
-        "department": "Computer Engineering"
+        "department": "Computer Engineering",
+        "title": "Data Analyst"
     }
 ]
 
-@router.get("", response_model=List[User])
+@router.get("/", response_model=List[UserResponse])
 def get_all_users():
     return fake_users_db
 
-@router.get("/{user_id}", response_model=User)
+@router.get("/{user_id}", response_model=UserResponse)
 def get_user_by_id(user_id: int):
     user = next((u for u in fake_users_db if u["id"] == user_id), None)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.post("", response_model=User, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user_in: UserCreate):
     new_id = len(fake_users_db) + 1 if fake_users_db else 1
     new_user = {"id": new_id, **user_in.model_dump()}
     fake_users_db.append(new_user)
     return new_user
 
-@router.put("/{user_id}", response_model=User)
+@router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, user_in: UserCreate):
     user_idx = next((i for i, u in enumerate(fake_users_db) if u["id"] == user_id), None)
     if user_idx is None:

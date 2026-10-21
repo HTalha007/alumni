@@ -1,8 +1,18 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-from models import Announcement, AnnouncementCreate
+from pydantic import BaseModel
+from models import AnnouncementCreate
 
-router = APIRouter(prefix="/api/announcements", tags=["Announcements"])
+# Frontend'in rahatça erişebilmesi için route yapısını güncelledik
+router = APIRouter(prefix="/announcements", tags=["Announcements"])
+
+# Dışarıya veri gönderirken kullanılacak Pydantic Çıktı Şeması (İşte hayat kurtaran kısım)
+class AnnouncementResponse(BaseModel):
+    id: int
+    title: str
+    content: str
+    category: str | None = None
+    date: str | None = None
 
 fake_announcements_db = [
     {
@@ -21,16 +31,17 @@ fake_announcements_db = [
     }
 ]
 
-@router.get("", response_model=List[Announcement])
+@router.get("/", response_model=List[AnnouncementResponse])
 def get_all_announcements():
     return fake_announcements_db
 
-@router.post("", response_model=Announcement, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=AnnouncementResponse, status_code=status.HTTP_201_CREATED)
 def create_announcement(announcement_in: AnnouncementCreate):
     new_id = len(fake_announcements_db) + 1 if fake_announcements_db else 1
     new_announcement = {
         "id": new_id,
-        "date": "2026-10-20",
+        "date": "2026-10-22",
+        "category": "Genel",
         **announcement_in.model_dump()
     }
     fake_announcements_db.append(new_announcement)
