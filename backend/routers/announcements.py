@@ -3,10 +3,8 @@ from typing import List
 from pydantic import BaseModel
 from models import AnnouncementCreate
 
-# Frontend'in rahatça erişebilmesi için route yapısını güncelledik
-router = APIRouter(prefix="/announcements", tags=["Announcements"])
+router = APIRouter()
 
-# Dışarıya veri gönderirken kullanılacak Pydantic Çıktı Şeması (İşte hayat kurtaran kısım)
 class AnnouncementResponse(BaseModel):
     id: int
     title: str
@@ -31,11 +29,13 @@ fake_announcements_db = [
     }
 ]
 
-@router.get("/", response_model=List[AnnouncementResponse])
+@router.get("", response_model=List[AnnouncementResponse])
+@router.get("/", response_model=List[AnnouncementResponse], include_in_schema=False)
 def get_all_announcements():
     return fake_announcements_db
 
-@router.post("/", response_model=AnnouncementResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AnnouncementResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=AnnouncementResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False)
 def create_announcement(announcement_in: AnnouncementCreate):
     new_id = len(fake_announcements_db) + 1 if fake_announcements_db else 1
     new_announcement = {

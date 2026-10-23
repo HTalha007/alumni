@@ -4,16 +4,16 @@ from routers import users, announcements, jobs
 from database import SessionLocal, engine, Base
 from models import User, JobPosting, Application
 
-# Veritabanı tablolarını otomatik oluştur
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Istanbul University Alumni Platform API",
     description="Backend API refactored to MVC pattern with Users, Announcements, and Jobs modules.",
-    version="1.2.0"
+    version="1.2.0",
+    docs_url="/api/swagger",
+    openapi_url="/api/openapi.json"
 )
 
-# KRİTİK EKLEME: React (localhost:5173) ile Backend (127.0.0.1:8000) arasındaki CORS engelini kaldırır
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,7 +22,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. Hafta Rotaları
 @app.get("/")
 def read_root():
     return {"status": "success", "message": "Welcome to Istanbul University Alumni API"}
@@ -48,16 +47,18 @@ def get_about():
         "features": ["Scrollytelling Landing Page", "Alumni Directory", "Job Board", "Announcements"]
     }
 
-# 4. Hafta MVC Modüllerini Uygulamaya Bağlama
-app.include_router(users.router)
-app.include_router(announcements.router)
+app.include_router(users.router, prefix="/api/users", tags=["Users (API)"])
+app.include_router(announcements.router, prefix="/api/announcements", tags=["Announcements (API)"])
+
+app.include_router(users.router, prefix="/users", tags=["Users"], include_in_schema=False)
+app.include_router(announcements.router, prefix="/announcements", tags=["Announcements"], include_in_schema=False)
 app.include_router(jobs.router)
+app.include_router(jobs.router, prefix="/api", include_in_schema=False)
 
 
 def seed_jobs_and_applications():
     db = SessionLocal()
     try:
-        # 1. Veritabanında hiç kullanıcı yoksa örnek mezunları oluştur
         first_user = db.query(User).first()
         if not first_user:
             first_user = User(
@@ -76,7 +77,6 @@ def seed_jobs_and_applications():
             db.commit()
             db.refresh(first_user)
 
-        # 2. İş ilanı yoksa örnek iş ilanlarını ve başvuruyu oluştur
         if db.query(JobPosting).count() == 0:
             job1 = JobPosting(
                 title="Frontend Developer (React/Vite)",
@@ -88,7 +88,6 @@ def seed_jobs_and_applications():
                 description="Python ve SQL yetenekleri gelişmiş, analitik düşünen uzman aranıyor.",
                 author_id=first_user.id
             )
-
             db.add_all([job1, job2])
             db.commit()
             db.refresh(job1)
@@ -100,12 +99,9 @@ def seed_jobs_and_applications():
             )
             db.add(app1)
             db.commit()
-            print("✅ İş ilanları ve başvurular veritabanına başarıyla eklendi (Seed başarılı)!")
     except Exception as e:
-        print(f"❌ Seed sırasında hata oluştu: {e}")
+        print(f"Seed hatası: {e}")
     finally:
         db.close()
 
-
-# Sunucu başlarken örnek verileri otomatik kontrol et ve yükle
 seed_jobs_and_applications()

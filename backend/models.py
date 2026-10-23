@@ -13,7 +13,6 @@ class User(Base):
     graduation_year = Column(String)
     title = Column(String)
 
-    # İş ilanları ve başvurularla olan ilişkiler
     job_postings = relationship("JobPosting", back_populates="author")
     applications = relationship("Application", back_populates="applicant")
 
@@ -27,7 +26,6 @@ class JobPosting(Base):
     description = Column(Text)
     author_id = Column(Integer, ForeignKey("users.id"))
 
-    # İlişkiler
     author = relationship("User", back_populates="job_postings")
     applications = relationship("Application", back_populates="job_posting")
 
@@ -41,7 +39,6 @@ class Application(Base):
     applicant_id = Column(Integer, ForeignKey("users.id"))
     cover_letter = Column(Text)
 
-    # İlişkiler
     job_posting = relationship("JobPosting", back_populates="applications")
     applicant = relationship("User", back_populates="applications")
 
@@ -58,9 +55,17 @@ class Announcement(Base):
 # --- Pydantic Şemaları ---
 class UserCreate(BaseModel):
     name: str
-    department: str
-    graduation_year: str
-    title: str
+    email: str | None = "alumni@istanbul.edu.tr"
+    department: str | None = "Management Information Systems"
+    graduation_year: str | int | None = 2026
+    title: str | None = "Alumni"
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    department: str | None = None
+    graduation_year: str | int | None = None
+    title: str | None = None
 
 class AnnouncementCreate(BaseModel):
     title: str
