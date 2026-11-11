@@ -1,0 +1,5 @@
+[2026-11-11 10:41:00] 🚨 KRİTİK SUNUCU HATASI: division by zero | Rota: /api/crash
+[2026-11-11 10:45:28] 🚨 KRİTİK SUNUCU HATASI (500): division by zero | Rota: /api/crash
+[2026-11-11 10:45:28] ⚠️ HTTP HATASI (500): GET /api/crash - Süre: 3 ms
+[2026-11-11 10:45:48] ⚠️ HTTP HATASI (404): GET /api/olmayan-rota - Süre: 22 ms
+[2026-11-11 10:54:37] ⚠️ HTTP HATASI (404): GET /404 - Süre: 2 ms

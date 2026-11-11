@@ -32,13 +32,14 @@ alumni/
 │   ├── models.py          # [MODEL] SQLAlchemy veritabanı tabloları ve Pydantic şemaları
 │   ├── database.py        # [ALTYAPI] SQLAlchemy ORM ve veritabanı bağlantısı
 │   ├── seed.py            # [ALTYAPI] Otomatik test verisi tohumlayıcı
-│   ├── main.py            # Uygulama merkezi ve router (Swagger: /api/swagger) entegrasyonları
+│   ├── main.py            # Uygulama merkezi, Middleware Katmanı ve Router entegrasyonları
 │   └── requirements.txt   # Python bağımlılıkları
 │
 ├── frontend/              # [VIEW] React & Tailwind UI Katmanı
 │   ├── src/               # Arayüz bileşenleri ve scrollytelling sayfaları
 │   └── package.json       # Frontend bağımlılıkları
 │
+├── logs/                  # Hata kayıtlarının (error.logs) kalıcı olarak tutulduğu dizin
 ├── docs/                  # Teknik dokümantasyon (DDD)
 ├── docker-compose.yml     # Konteyner orkestrasyonu
 └── README.md              # Proje dokümantasyonu ve mimari rehberi
