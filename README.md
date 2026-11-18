@@ -11,6 +11,13 @@ Temel Modüller:
 
 ---
 
+## 📚 Tasarım ve Dokümantasyon Rehberleri
+Platformun marka stratejisi ve kullanıcı arayüzü tasarım standartları aşağıdaki rehberlerde detaylandırılmıştır:
+- [Marka Kimliği (brand.md)](./brand.md)
+- [Tasarım Sistemi (DESIGN.md)](./DESIGN.md)
+
+---
+
 ## 🛠 Teknoloji Yığını ve Tercih Nedenleri
 Projede, kurumsal ihtiyaçlara cevap verecek hız ve modernliği sağlamak adına Ayrık (Decoupled) Monorepo mimarisi kullanılmıştır.
 
