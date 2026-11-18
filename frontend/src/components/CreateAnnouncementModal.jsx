@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { IconX, IconBell, IconCheck } from './Icons';
+import { IconX, IconCheck } from './Icons';
 
 export default function CreateAnnouncementModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
     title: '',
-    content: '',
-    category: 'Etkinlik'
+    content: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -32,7 +30,7 @@ export default function CreateAnnouncementModal({ isOpen, onClose, onSuccess }) 
       });
 
       if (!res.ok) {
-        throw new Error('Duyuru eklenirken bir hata oluştu.');
+        throw new Error('Duyuru kaydedilirken bir hata oluştu.');
       }
 
       setSuccess(true);
@@ -40,8 +38,8 @@ export default function CreateAnnouncementModal({ isOpen, onClose, onSuccess }) 
         setSuccess(false);
         onSuccess();
         onClose();
-        setFormData({ title: '', content: '', category: 'Etkinlik' });
-      }, 1500);
+        setFormData({ title: '', content: '' });
+      }, 1400);
     } catch (err) {
       setError(err.message || 'Duyuru kaydedilemedi.');
     } finally {
@@ -50,96 +48,82 @@ export default function CreateAnnouncementModal({ isOpen, onClose, onSuccess }) 
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
-          onClick={onClose}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative z-10"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center">
-                <IconBell className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Yeni Duyuru & Etkinlik Yayınla</h3>
-                <p className="text-xs text-slate-400">Üniversite ve mezun topluluğuna resmi bülten ekleyin.</p>
-              </div>
-            </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
-              <IconX className="w-5 h-5" />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[#161616]/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative bg-white border border-[#E2DFD7] rounded-sm w-full max-w-lg p-6 z-10">
+        <div className="flex justify-between items-start pb-3 mb-4 border-b border-[#E2DFD7]">
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#7C1D26] font-semibold">
+              Resmi Bülten Tanzimi
+            </span>
+            <h3 className="font-serif text-xl font-bold text-[#161616]">
+              Yeni Duyuru & Etkinlik Girişi
+            </h3>
           </div>
+          <button onClick={onClose} className="text-[#5A5854] hover:text-[#161616] p-1">
+            <IconX className="w-4 h-4" />
+          </button>
+        </div>
 
-          {success ? (
-            <div className="py-8 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
-                <IconCheck className="w-8 h-8" />
-              </div>
-              <h4 className="text-lg font-bold text-white">Duyuru Yayınlandı!</h4>
-              <p className="text-xs text-slate-400">Tüm mezunlar duyurular sayfasında içeriği görebilir.</p>
+        {success ? (
+          <div className="py-8 text-center space-y-2">
+            <div className="w-10 h-10 border border-[#1E4D2B] bg-[#1E4D2B]/10 text-[#1E4D2B] flex items-center justify-center mx-auto rounded-sm">
+              <IconCheck className="w-5 h-5" />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
-                  {error}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Duyuru Başlığı *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Örn: 2026 Mezunlar Günü Beyazıt Buluşması"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500"
-                />
+            <h4 className="font-serif text-base font-bold text-[#161616]">Duyuru Bültene Eklendi</h4>
+            <p className="text-xs text-[#5A5854]">Tüm mezunlar ve mensuplar için yayınlandı.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-2.5 bg-[#7C1D26]/10 border border-[#7C1D26]/20 text-[#7C1D26] text-xs font-mono">
+                {error}
               </div>
+            )}
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Duyuru / Etkinlik İçeriği *</label>
-                <textarea
-                  required
-                  rows="4"
-                  placeholder="Etkinlik yeri, saati, katılım koşulları ve detaylı bilgiler..."
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500 resize-none"
-                ></textarea>
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Duyuru / Etkinlik Başlığı *</label>
+              <input
+                type="text"
+                required
+                placeholder="Örn: 2026 Mezunlar Buluşması ve Beyazıt Töreni"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
+              />
+            </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
-                >
-                  Vazgeç
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20"
-                >
-                  {submitting ? 'Yayınlanıyor...' : 'Duyuruyu Yayınla'}
-                </button>
-              </div>
-            </form>
-          )}
-        </motion.div>
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Duyuru Metni *</label>
+              <textarea
+                required
+                rows="4"
+                placeholder="Etkinlik yeri, katılım koşulları, program akışı ve resmi duyuru metni..."
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm resize-none"
+              ></textarea>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-3 border-t border-[#E2DFD7]">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-transparent text-[#5A5854] text-xs font-semibold hover:bg-[#F2F0EA] rounded-sm"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-5 py-2 bg-[#0F2942] hover:bg-[#183856] text-white text-xs font-semibold rounded-sm transition-colors"
+              >
+                {submitting ? 'Yayınlanıyor...' : 'Duyuruyu Yayınla'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-    </AnimatePresence>
+    </div>
   );
 }

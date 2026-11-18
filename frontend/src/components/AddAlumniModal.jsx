@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { IconX, IconGraduationCap, IconCheck } from './Icons';
+import { IconX, IconCheck } from './Icons';
 
 export default function AddAlumniModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -23,11 +22,11 @@ export default function AddAlumniModal({ isOpen, onClose, onSuccess }) {
 
     try {
       const payload = {
-        name: formData.name,
-        department: formData.department,
+        name: formData.name.trim(),
+        department: formData.department.trim(),
         graduation_year: formData.graduation_year ? parseInt(formData.graduation_year) : 2024,
-        title: formData.title || 'Mezun',
-        email: formData.email || `${formData.name.toLowerCase().replace(/\s+/g, '.')}@alumni.istanbul.edu.tr`
+        title: formData.title.trim() || 'Mezun',
+        email: formData.email.trim() || `${formData.name.toLowerCase().replace(/\s+/g, '.')}@alumni.istanbul.edu.tr`
       };
 
       const res = await fetch('http://127.0.0.1:8000/users/', {
@@ -37,7 +36,7 @@ export default function AddAlumniModal({ isOpen, onClose, onSuccess }) {
       });
 
       if (!res.ok) {
-        throw new Error('Kayıt oluşturulurken bir hata meydana geldi.');
+        throw new Error('Kayıt oluşturulurken sunucu hatası meydana geldi.');
       }
 
       setSuccess(true);
@@ -46,7 +45,7 @@ export default function AddAlumniModal({ isOpen, onClose, onSuccess }) {
         onSuccess();
         onClose();
         setFormData({ name: '', department: '', graduation_year: '', title: '', email: '' });
-      }, 1500);
+      }, 1400);
     } catch (err) {
       setError(err.message || 'Kayıt sırasında bir hata oluştu.');
     } finally {
@@ -55,132 +54,121 @@ export default function AddAlumniModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
-          onClick={onClose}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative z-10"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center">
-                <IconGraduationCap className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Mezunlar Ağına Katıl</h3>
-                <p className="text-xs text-slate-400">İstanbul Üniversitesi mezun profilinizi oluşturun.</p>
-              </div>
-            </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
-              <IconX className="w-5 h-5" />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Mat Arka Plan Örtüsü */}
+      <div className="absolute inset-0 bg-[#161616]/40 backdrop-blur-[2px]" onClick={onClose} />
+
+      {/* Editoryal Keskin Modal */}
+      <div className="relative bg-white border border-[#E2DFD7] rounded-sm w-full max-w-md p-6 z-10">
+        <div className="flex justify-between items-start pb-3 mb-4 border-b border-[#E2DFD7]">
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#7C1D26] font-semibold">
+              Resmi Başvuru Formu
+            </span>
+            <h3 className="font-serif text-xl font-bold text-[#161616]">
+              Mezun Kütüğüne Kayıt
+            </h3>
           </div>
+          <button onClick={onClose} className="text-[#5A5854] hover:text-[#161616] p-1">
+            <IconX className="w-4 h-4" />
+          </button>
+        </div>
 
-          {success ? (
-            <div className="py-8 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
-                <IconCheck className="w-8 h-8" />
-              </div>
-              <h4 className="text-lg font-bold text-white">Kaydınız Başarıyla Eklendi!</h4>
-              <p className="text-xs text-slate-400">Mezun dizininde yerinizi aldınız.</p>
+        {success ? (
+          <div className="py-8 text-center space-y-2">
+            <div className="w-10 h-10 border border-[#1E4D2B] bg-[#1E4D2B]/10 text-[#1E4D2B] flex items-center justify-center mx-auto rounded-sm">
+              <IconCheck className="w-5 h-5" />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
-                  {error}
-                </div>
-              )}
+            <h4 className="font-serif text-base font-bold text-[#161616]">Kayıt Sisteme İşlendi</h4>
+            <p className="text-xs text-[#5A5854]">Mezun bilgisi kütüğe aktarıldı.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-2.5 bg-[#7C1D26]/10 border border-[#7C1D26]/20 text-[#7C1D26] text-xs font-mono">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Adı ve Soyadı *</label>
+              <input
+                type="text"
+                required
+                placeholder="Örn: Mehmet Özkan"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Fakülte / Bölüm *</label>
+              <input
+                type="text"
+                required
+                placeholder="Örn: İktisat Fakültesi / İşletme"
+                value={formData.department}
+                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#161616] mb-1">Mezuniyet Yılı *</label>
+                <input
+                  type="number"
+                  required
+                  placeholder="Örn: 2021"
+                  value={formData.graduation_year}
+                  onChange={(e) => setFormData({ ...formData, graduation_year: e.target.value })}
+                  className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm font-mono"
+                />
+              </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Ad Soyad *</label>
+                <label className="block text-xs font-semibold text-[#161616] mb-1">Mesleki Unvan</label>
                 <input
                   type="text"
-                  required
-                  placeholder="Örn: Mehmet Özkan"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500"
+                  placeholder="Örn: Finans Uzmanı"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Bölüm / Fakülte *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Örn: Bilgisayar Mühendisliği"
-                  value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Kurumsal E-posta</label>
+              <input
+                type="email"
+                placeholder="Örn: mehmet@alumni.istanbul.edu.tr"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm font-mono"
+              />
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Mezuniyet Yılı *</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="Örn: 2023"
-                    value={formData.graduation_year}
-                    onChange={(e) => setFormData({ ...formData, graduation_year: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Mevcut Unvan</label>
-                  <input
-                    type="text"
-                    placeholder="Örn: Data Scientist"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">E-posta Adresi (İsteğe Bağlı)</label>
-                <input
-                  type="email"
-                  placeholder="Örn: mehmet@alumni.istanbul.edu.tr"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
-                >
-                  Vazgeç
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-blue-600/30"
-                >
-                  {submitting ? 'Kaydediliyor...' : 'Profili Kaydet'}
-                </button>
-              </div>
-            </form>
-          )}
-        </motion.div>
+            <div className="flex justify-end space-x-2 pt-3 border-t border-[#E2DFD7]">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-transparent text-[#5A5854] text-xs font-semibold hover:bg-[#F2F0EA] rounded-sm"
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-5 py-2 bg-[#0F2942] hover:bg-[#183856] text-white text-xs font-semibold rounded-sm transition-colors"
+              >
+                {submitting ? 'Kaydediliyor...' : 'Kütüğe Ekle'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-    </AnimatePresence>
+    </div>
   );
 }

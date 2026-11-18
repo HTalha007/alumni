@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   IconBriefcase,
   IconBuilding,
   IconPlus,
   IconArrowUpRight,
-  IconSearch,
-  IconMapPin,
-  IconCheck
+  IconSearch
 } from '../components/Icons';
 
 export default function JobsPage({ jobs, loading, onOpenCreateJob, onOpenApplyJob }) {
@@ -20,109 +17,100 @@ export default function JobsPage({ jobs, loading, onOpenCreateJob, onOpenApplyJo
   });
 
   return (
-    <div className="w-full pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Başlık ve Eylemler */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
+    <div className="w-full pt-10 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Üst Editoryal Başlık ve Aksiyonlar */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 pb-6 border-b border-[#E2DFD7]">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-3">
-            <IconBriefcase className="w-3.5 h-3.5" />
-            <span>Kariyer Köprüsü (docs/ddd.md Uyumlu)</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Kariyer & İş / Staj Panosu
+          <span className="font-mono text-[11px] uppercase tracking-wider text-[#7C1D26] font-semibold">
+            Mesleki Dayanışma &bull; İstihdam Panosu
+          </span>
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#161616] mt-1 tracking-tight">
+            Kariyer & İş / Staj İlanları
           </h1>
-          <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl">
-            İstanbul Üniversitesi mezunlarının kurduğu veya yöneticisi olduğu şirketlerden doğrulanmış iş ve staj olanakları.
+          <p className="text-xs sm:text-sm text-[#5A5854] mt-2 max-w-2xl leading-relaxed">
+            İstanbul Üniversitesi mezunlarının kurucusu veya yöneticisi olduğu kurumların doğrudan mezun ve öğrencilere yönelik açık pozisyonları.
           </p>
         </div>
 
         <button
           onClick={onOpenCreateJob}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold transition-all shadow-lg shadow-indigo-600/25"
+          className="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#0F2942] hover:bg-[#183856] text-white text-xs font-semibold rounded-sm transition-colors whitespace-nowrap"
         >
-          <IconPlus className="w-4 h-4" />
-          <span>+ Yeni İş İlanı Yayınla</span>
+          <IconPlus className="w-3.5 h-3.5 text-white" />
+          <span>Yeni İlan Tanzim Et</span>
         </button>
       </div>
 
-      {/* Arama ve Filtre Çubuğu */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-xl">
+      {/* Arama Masası */}
+      <div className="bg-[#F2F0EA] border border-[#E2DFD7] p-4 mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between rounded-sm">
         <div className="relative w-full sm:w-96">
-          <IconSearch className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <IconSearch className="w-4 h-4 text-[#5A5854] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Pozisyon, şirket veya anahtar kelime ara..."
+            placeholder="Pozisyon, kurum veya uzmanlık ara..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full pl-9 pr-3 py-2 bg-white border border-[#E2DFD7] text-xs text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
           />
         </div>
 
-        <div className="text-xs text-slate-400 font-medium">
-          Toplam Aktif Pozisyon: <span className="text-indigo-400 font-bold">{filteredJobs.length}</span>
+        <div className="font-mono text-xs text-[#5A5854]">
+          Açık Pozisyon Sayısı: <span className="font-bold text-[#161616]">{filteredJobs.length}</span>
         </div>
       </div>
 
-      {/* İlan Kartları Listesi */}
+      {/* İlan Kartları Grid */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[1, 2, 3, 4].map((n) => (
-            <div key={n} className="h-52 bg-slate-900/50 border border-slate-800 rounded-2xl animate-pulse" />
+          {[1, 2].map((n) => (
+            <div key={n} className="h-48 bg-white border border-[#E2DFD7] rounded-sm animate-pulse" />
           ))}
         </div>
       ) : filteredJobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredJobs.map((job, idx) => (
-            <motion.div
+            <div
               key={job.id || idx}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: idx * 0.05 }}
-              className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-indigo-500/40 hover:bg-slate-900/90 transition-all flex flex-col justify-between shadow-xl group"
+              className="bg-white border border-[#E2DFD7] p-6 rounded-sm hover:border-[#0F2942] transition-colors flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
-                      <IconBuilding className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">
-                        {job.title}
-                      </h3>
-                      <p className="text-xs text-slate-400">
-                        İlan Sahibi Mezun ID: <span className="text-amber-400 font-semibold font-mono">#{job.author_id}</span>
-                      </p>
-                    </div>
+                <div className="flex items-start justify-between pb-3 mb-3 border-b border-[#E2DFD7]">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-[#161616]">
+                      {job.title}
+                    </h3>
+                    <p className="font-mono text-xs text-[#5A5854] mt-0.5">
+                      İlan Veren Mezun Sicil: <span className="font-bold text-[#7C1D26]">#{job.author_id}</span>
+                    </p>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Aktif İlan
+                  <span className="font-mono text-[11px] px-2 py-0.5 bg-[#1E4D2B]/10 text-[#1E4D2B] border border-[#1E4D2B]/20">
+                    Aktif
                   </span>
                 </div>
 
-                <div className="mt-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800/60 text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line max-h-36 overflow-y-auto">
-                  {job.description || 'Bu ilan için ek açıklama girilmedi.'}
+                <div className="text-xs text-[#5A5854] leading-relaxed whitespace-pre-line bg-[#FAF9F6] p-3 border border-[#E2DFD7] rounded-sm max-h-32 overflow-y-auto">
+                  {job.description || 'Bu ilan için ayrıntılı açıklama tanzim edilmemiştir.'}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-5 mt-5 border-t border-slate-800/80">
-                <span className="text-[11px] text-slate-500">
-                  Doğrulanmış İÜ İş/Staj Duyurusu
+              <div className="mt-5 pt-3 border-t border-[#E2DFD7] flex items-center justify-between">
+                <span className="font-mono text-[11px] text-[#5A5854]">
+                  Doğrulanmış İÜ İlanı
                 </span>
                 <button
                   onClick={() => onOpenApplyJob(job.id, job.title)}
-                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all shadow-md shadow-blue-600/20"
+                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#0F2942] hover:bg-[#183856] text-white text-xs font-semibold rounded-sm transition-colors"
                 >
-                  <span>Hemen Başvur</span>
+                  <span>Başvuru İlet</span>
                   <IconArrowUpRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       ) : (
-        <div className="py-20 text-center bg-slate-900/30 border border-slate-800/60 rounded-2xl text-slate-400 text-sm">
-          Şu an aradığınız kriterlere uygun iş ilanı bulunmamaktadır. İlk ilanı siz yayınlayabilirsiniz!
+        <div className="py-16 text-center bg-white border border-[#E2DFD7] text-xs text-[#5A5854] rounded-sm">
+          Arama kriterlerine uygun kariyer ilanı bulunamadı.
         </div>
       )}
     </div>

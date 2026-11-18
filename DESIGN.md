@@ -1,129 +1,115 @@
 ---
-name: "Istanbul University Alumni Design System"
-version: "1.0.0"
-primary_color: "#2563EB"
-background_color: "#020617"
-font_family_sans: "Inter, system-ui, -apple-system, sans-serif"
-font_family_mono: "ui-monospace, SFMono-Regular, monospace"
+name: "Istanbul University Editorial Design System"
+version: "2.0.0"
+primary_color: "#0F2942"
+secondary_color: "#7C1D26"
+background_color: "#FAF9F6"
+surface_color: "#F2F0EA"
+text_primary: "#161616"
+text_secondary: "#5A5854"
+border_color: "#E2DFD7"
+font_family_serif: "'Newsreader', 'Playfair Display', Georgia, serif"
+font_family_sans: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+font_family_mono: "'JetBrains Mono', monospace"
 ---
 
-# İstanbul Üniversitesi Mezun Platformu - Tasarım Sistemi (DESIGN.md)
+# İstanbul Üniversitesi Mezun Platformu - Editoryal Tasarım Sistemi (DESIGN.md)
 
-Bu doküman, `brand.md` marka kimliğine ve `awesome-design-md` standartlarına dayalı olarak React + Tailwind CSS arayüz geliştirme kurallarını belirler.
-
----
-
-# 1. Visual Theme & Atmosphere
-- **Mood / Vibe:** Prestijli akademik miras, derin gece mavisi/slate kanvas, modern editoryal netlik ve hafif scrollytelling dinamizmi.
-- **Design Philosophy:** Tarihi kurumsallığı hantal bürokrasiden arındırarak; ferah boşluklar (whitespace), yüksek kontrastlı okunabilirlik ve amaca yönelik mikro etkileşimlerle premium bir mezun deneyimi sunmak.
-- **Corner Radius Strategy:** Modern ve yumuşak geometri:
-  - Kartlar ve modallar: `rounded-2xl` (16px)
-  - Butonlar ve inputlar: `rounded-xl` (12px)
-  - Rozetler ve pill etiketler: `rounded-full` (9999px)
+Bu doküman, İstanbul Üniversitesi'nin 1453'e uzanan kurumsal ciddiyetini, editoryal tipografisini ve modern dijital arşiv standartlarını belirler. Standart AI/SaaS şablonlarından (gradientler, blur efektleri, neon renkler, devasa balon köşeler) kesin olarak arındırılmıştır.
 
 ---
 
-# 2. Color Palette & Roles
+## 1. Katı Tasarım İlkeleri ve Yasaklar (Anti-AI Rules)
 
-| Rol | Semantik Token | Hex Kodu | Tailwind Sınıfı | Kullanım Alanı |
+Aşağıdaki kalıpların platformun hiçbir yerinde kullanılmasına izin verilmez:
+- ❌ **YASAK:** Gradient arka planlar (`bg-gradient-*`) ve neon renk tonları.
+- ❌ **YASAK:** Arka planda uçuşan bulanık ışık küreleri (`blur-[...]`, ambient glow).
+- ❌ **YASAK:** Ağır gölgeler (`shadow-lg`, `shadow-xl`, `shadow-2xl`).
+- ❌ **YASAK:** Arayüz içi emojiler (⚡, 🚨, 🏛️, 🚀, vb.). Tüm simgeler sade, 1.5px/1px ince vektörel çizgi ikonları olacaktır.
+- ❌ **YASAK:** Yuvarlak balon köşeler (`rounded-2xl`, `rounded-3xl`, `rounded-full`). Sadece keskin veya mikro köşeler (`rounded-none`, `rounded-sm`, `rounded`) kullanılacaktır.
+- ❌ **YASAK:** Klişe animasyonlu sıçrama ve nabız efektleri (`animate-pulse`, `animate-bounce`, `animate-ping`).
+- ❌ **YASAK:** Ortalanmış yapay 3'lü ikon-kart şablonları. Tüm içerik editoryal gazete/dergi hiyerarşisiyle **sola yaslı**, net çizgi ayraçlı ve asimetrik tipografik grid ile kurgulanacaktır.
+- ❌ **YASAK:** İçi boş pazarlama sloganları ("Geleceği şekillendiriyoruz", "Lider ağ" vb.). Bunun yerine doğrudan, kurumsal ve nesnel Türkçe metinler kullanılacaktır.
+
+---
+
+## 2. Renk Paleti ve Görevleri
+
+Tasarım sıcak kağıt dokusu, editoryal mat mürekkep ve köklü üniversite laciverti üzerine inşa edilmiştir:
+
+| Rol | Semantik İsim | HEX Değeri | Tailwind / CSS Karşılığı | Kullanım Amacı |
 | :--- | :--- | :--- | :--- | :--- |
-| **Canvas / Background** | `--color-bg` | `#020617` | `bg-slate-950` | Ana sayfa arka planı, zemin kanvası |
-| **Surface / Card** | `--color-surface` | `#0f172a` | `bg-slate-900` | Kartlar, form kapsayıcıları, modal pencereleri |
-| **Surface Glass** | `--color-surface-glass` | `rgba(15,23,42,0.75)` | `bg-slate-900/75 backdrop-blur-md` | Sticky navbar, süzülen filtre barları |
-| **Border / Divider** | `--color-border` | `#1e293b` | `border-slate-800` | Kart kenarlıkları, satır ayraçları |
-| **Border Hover** | `--color-border-hover` | `#334155` | `border-slate-700` | Etkileşimdeki eleman sınırları |
-| **Brand Primary (Blue)**| `--color-primary` | `#2563eb` | `bg-blue-600` / `text-blue-500` | Birincil aksiyonlar, ana CTA butonları |
-| **Brand Secondary (Indigo)**| `--color-secondary`| `#4f46e5` | `bg-indigo-600` / `text-indigo-400`| Kariyer modülü, alt başlık vurguları |
-| **Heritage Accent (Amber)**| `--color-accent` | `#f59e0b` | `text-amber-400` / `bg-amber-500`| 1453 kuruluş vurguları, ödüller, rozetler |
-| **Text High Emphasis** | `--color-text-high` | `#f8fafc` | `text-slate-50` / `text-white` | Başlıklar, metrik sayıları |
-| **Text Medium Emphasis**| `--color-text-med` | `#94a3b8` | `text-slate-400` | Paragraflar, ikincil etiketler |
-| **Text Subtle / Muted** | `--color-text-subtle` | `#64748b` | `text-slate-500` | Tarih damgaları, altbilgi telif metinleri |
-| **Status Success** | `--color-success` | `#10b981` | `text-emerald-400` / `bg-emerald-500/10` | Aktif ilan, başarılı kayıt rozetleri |
-| **Status Danger** | `--color-danger` | `#ef4444` | `text-rose-400` / `bg-rose-500/10` | Hata mesajları, kritik uyarılar |
+| **Ana Zemin** | `--color-bg` | `#FAF9F6` | `bg-[#FAF9F6]` | Sıcak kağıt beyazı / mat kanvas |
+| **İkincil Yüzey** | `--color-surface` | `#F2F0EA` | `bg-[#F2F0EA]` | Tablo başlıkları, form alanları, filtre barları |
+| **Kart Zemin** | `--color-card` | `#FFFFFF` | `bg-white` | İçerik kartları, modal pencereleri |
+| **Ana Çizgi / Kenarlık** | `--color-border` | `#E2DFD7` | `border-[#E2DFD7]` | 1px katı ayraç çizgileri, kart sınırları |
+| **Koyu Çizgi / Vurgu** | `--color-border-dark` | `#161616` | `border-[#161616]` | Başlık altı editoryal vurgu çizgileri (2px) |
+| **Ana Metin (Mürekkep)**| `--color-text-primary`| `#161616` | `text-[#161616]` | Manşetler, gövde metinleri, tablo verileri |
+| **İkincil Metin** | `--color-text-muted` | `#5A5854` | `text-[#5A5854]` | Açıklamalar, unvanlar, meta bilgiler |
+| **Kurumsal Lacivert** | `--color-primary` | `#0F2942` | `bg-[#0F2942]`, `text-[#0F2942]`| Birincil butonlar, ana kurumsal kimlik |
+| **Akademik Bordo** | `--color-accent` | `#7C1D26` | `text-[#7C1D26]`, `border-[#7C1D26]`| Rektörlük etiketleri, tarih damgaları, fakülte aksanları |
+| **Durum / Aktif** | `--color-status-ok` | `#1E4D2B` | `text-[#1E4D2B]`, `bg-[#1E4D2B]/10` | Aktif kayıt ve onay rozetleri |
 
 ---
 
-# 3. Typography Rules
-- **Sans-serif Font:** `Inter`, `system-ui`, `-apple-system`, `sans-serif`
-- **Monospace Font:** `ui-monospace`, `SFMono-Regular`, `monospace`
+## 3. Tipografi Sistemi
 
-| Hiyerarşi | Boyut / Line-Height | Ağırlık (Font-Weight) | Tracking (Letter-Spacing) | Tailwind Karşılığı |
-| :--- | :--- | :--- | :--- | :--- |
-| **Display / Hero H1** | `3.75rem (60px) / 1.1` | Black / Extrabold (800-900) | Tight (`tracking-tight`) | `text-4xl sm:text-6xl font-black` |
-| **Page H2** | `2.25rem (36px) / 1.2` | Extrabold (800) | Tight (`tracking-tight`) | `text-3xl sm:text-4xl font-extrabold` |
-| **Section / Card H3** | `1.25rem (20px) / 1.3` | Bold (700) | Normal (`tracking-normal`) | `text-xl font-bold` |
-| **Body Large** | `1.125rem (18px) / 1.6` | Regular / Light (300-400) | Normal | `text-lg text-slate-300 font-light` |
-| **Body Regular** | `0.875rem (14px) / 1.5` | Normal (400) | Normal | `text-sm text-slate-400` |
-| **Caption / Label** | `0.75rem (12px) / 1.4` | Semibold (600) | Wide (`tracking-wider`) | `text-xs font-semibold uppercase` |
+Platformda editoryal gazete ve akademik yayın standartlarına uygun 3 font ailesi kullanılır:
 
----
+1. **Başlıklar (Serif):** `Newsreader`, `Playfair Display`, `Georgia`, `serif`
+   - Karakter: Zarif, akademik, otoriter, negatif harf aralığı (`tracking-tight`).
+2. **Arayüz ve Gövde (Sans-serif):** `Plus Jakarta Sans`, `-apple-system`, `sans-serif`
+   - Karakter: Yüksek okunabilirlik, geometrik ve nötr.
+3. **Meta Veriler ve Sayısal Etiketler (Monospace):** `JetBrains Mono`, `monospace`
+   - Karakter: Mezuniyet yılı, kayıt numarası, tarih damgası, API durumu.
 
-# 4. Component Stylings
+### Tipografi Ölçeği
 
-### 4.1. Navbar
-- Sticky üstte sabit: `fixed top-0 left-0 right-0 z-50`
-- Arka plan: `bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80`
-- Logo amblemi: `bg-gradient-to-br from-amber-500 via-blue-600 to-indigo-700 rounded-xl`
-- Bağlantılar: `text-slate-300 hover:text-white transition-colors`
-
-### 4.2. Buttons (Butonlar)
-- **Primary:** `px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-600/25 active:scale-[0.98]`
-- **Secondary / Outline:** `px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 font-medium text-xs transition-all`
-- **Accent (Heritage CTA):** `px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20`
-
-### 4.3. Cards (Kartlar)
-- Arka plan ve kenarlık: `bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6`
-- Hover durumu: `hover:border-slate-700 hover:bg-slate-900/90 transition-all shadow-xl shadow-black/20`
-
-### 4.4. Form / Inputs
-- Alanlar: `w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors`
-- Etiketler: `block text-xs font-semibold text-slate-300 mb-1.5`
-
-### 4.5. Badges / Status Pills
-- **Genel:** `px-2.5 py-1 rounded-full text-[11px] font-semibold border`
-- **Etkinlik / Mavi:** `bg-blue-500/10 text-blue-400 border-blue-500/20`
-- **Kariyer / İndigo:** `bg-indigo-500/10 text-indigo-400 border-indigo-500/20`
-- **Tarihsel / Amber:** `bg-amber-500/10 text-amber-400 border-amber-500/20`
-- **Başarı / Yeşil:** `bg-emerald-500/10 text-emerald-400 border-emerald-500/20`
-
-### 4.6. Footer
-- `border-t border-slate-800/80 bg-slate-950 text-slate-400 text-xs py-12`
+| Düzey | Font Ailesi | Boyut / Satır Boyu | Ağırlık | Harf Aralığı | Tailwind Sınıfı |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Manşet (Hero H1)** | Serif | `3.5rem (56px) / 1.15` | Regular (400) / Medium (500) | `-0.02em` | `font-serif text-4xl sm:text-6xl text-[#161616] tracking-tight` |
+| **Bölüm Başlığı (H2)**| Serif | `2.25rem (36px) / 1.2` | Medium (500) / Semibold (600) | `-0.01em` | `font-serif text-2xl sm:text-3xl text-[#161616]` |
+| **Kart Başlığı (H3)** | Sans / Serif | `1.125rem (18px) / 1.35`| Semibold (600) | Normal | `font-sans text-lg font-semibold text-[#161616]` |
+| **Gövde Metni** | Sans | `0.9375rem (15px) / 1.6`| Regular (400) | Normal | `font-sans text-[15px] text-[#5A5854] leading-relaxed` |
+| **Üst Başlık (Kicker)**| Sans | `0.6875rem (11px) / 1.4`| Bold (700) | `+0.08em` | `font-sans text-[11px] font-bold uppercase tracking-widest text-[#7C1D26]` |
+| **Meta / Tarih** | Mono | `0.75rem (12px) / 1.4` | Medium (500) | Normal | `font-mono text-xs text-[#5A5854]` |
 
 ---
 
-# 5. Layout Principles
-- **Grid & Max-Width:** Standart sayfa hizalama kapsayıcısı `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`.
-- **Spacing Scale:** 4px katları baz alınır (`p-4`, `p-6`, `py-12`, `py-20`).
-- **Nefes Alan Tasarım (Whitespace):** Bölümler arasında en az `py-20` (80px) boşluk bırakılarak bilgi yığılması engellenir.
+## 4. Bileşen Kuralları (Component Rules)
+
+### 4.1. Navbar (Üst Başlık ve Kurumsal Antet)
+- Üstte sabit ancak gölgesiz; sıcak zemin renginde, altta net `1px solid #E2DFD7` çizgi.
+- Sol tarafta İstanbul Üniversitesi kurumsal tipografisi ve kuruluş yılı (`1453`).
+- Menü bağlantıları sade, büyük harf veya küçük harf zarif sans-serif, hover'da lacivert alt çizgi.
+- Aksiyon butonları minimal: `bg-[#0F2942]` düz zemin, keskin köşe (`rounded-sm`).
+
+### 4.2. Butonlar (Buttons)
+- **Primary:** `px-4 py-2 bg-[#0F2942] hover:bg-[#163859] text-white text-xs font-semibold rounded-sm transition-colors border border-[#0F2942]`
+- **Secondary / Outline:** `px-4 py-2 bg-transparent hover:bg-[#F2F0EA] text-[#161616] text-xs font-semibold rounded-sm border border-[#E2DFD7] transition-colors`
+- **Accent:** `px-4 py-2 bg-[#7C1D26] hover:bg-[#94232E] text-white text-xs font-semibold rounded-sm transition-colors`
+
+### 4.3. Kartlar ve Bölümler (Cards & Sections)
+- Köşeler: Kesinlikle `rounded-sm` (maksimum 2px) veya `rounded-none`.
+- Kenarlık: `1px solid #E2DFD7`.
+- Zemin: Beyaz (`#FFFFFF`) veya açık taş (`#F2F0EA`).
+- Asimetrik editoryal sütun düzeni: Manşet sol kolonda geniş açıklama, sağda tek sütunlu veri akışı veya 2 sütunlu editoryal grid.
+
+### 4.4. Formlar ve Girdiler (Forms & Inputs)
+- Zemin: `#FFFFFF` veya `#FAF9F6`.
+- Kenarlık: `1px solid #E2DFD7`, tıklandığında (focus) `border-[#0F2942]` veya `outline-none ring-1 ring-[#0F2942]`.
+- Etiketler: Küçük, hafif koyu, net ve sola yaslı.
+
+### 4.5. Rozetler ve Etiketler (Tags & Badges)
+- Yuvarlak balon YOK; dikdörtgen, keskin kenarlı etiketler:
+- `px-2 py-0.5 border border-[#E2DFD7] bg-[#F2F0EA] text-[11px] font-mono text-[#161616] rounded-none`
 
 ---
 
-# 6. Depth & Elevation
-- Koyu modda ağır drop shadow yerine **yüzey rengi basamaklandırması** (`bg-slate-950` -> `bg-slate-900/60` -> `bg-slate-800`) ve **ince bordürler** (`border-slate-800`) kullanılır.
-- Glow efektleri sadece odak noktalarında `blur-[120px]` ve düşük opaklık (`opacity-15`) ile kullanılır.
+## 5. Editoryal İletişim Dili (Microcopy)
 
----
-
-# 7. Do's and Don'ts
-
-### Do (Yapın):
-- Semantik renk token'larına sadık kalın (`slate-950`, `slate-900`, `blue-600`, `amber-400`).
-- Tüm etkileşimli buton ve form elemanlarında focus ring ve hover geçişi tanımlayın.
-- `docs/ddd.md` kurallarına uyun: iş ilanı oluştururken `title` (zorunlu, max 120 karakter), `company` (zorunlu), `city` (opsiyonel), `description` (opsiyonel).
-
-### Don't (Yapmayın):
-- Rastgele, sistem dışı renkler ve sert gölgeler eklemeyin.
-- Tipografide 3'ten fazla font boyutu karışıklığı yaratmayın.
-- Backend kurallarını ve API veri tiplerini frontend'de bozmayın.
-
----
-
-# 8. Responsive Behavior
-- **Mobile (< 640px):** Tek kolonlu akış, gizlenebilir mobil menü, yatay kaydırılabilir filtre çubukları.
-- **Tablet (640px - 1024px):** 2 kolonlu grid sistemleri.
-- **Desktop (> 1024px):** 3 veya 4 kolonlu grid sistemleri, sabit sticky navigasyon.
-
----
-
-# 9. Agent Prompt Guide
-> "Bu projede arayüz geliştirirken veya güncellerken daima `DESIGN.md` ve `brand.md` rehberlerine sadık kalın. Arka planları `bg-slate-950`, kart yüzeylerini `bg-slate-900/60 border border-slate-800 rounded-2xl`, birincil butonları `bg-blue-600 rounded-xl` olarak uygulayın. `docs/ddd.md` domain kurallarını eksiksiz gözetin."
+- Klişe ve gösterişli pazarlama sözleri yerine doğrudan nesnel ifadeler:
+  - *"Geçmişin gücüyle geleceği şekillendir"* yerine -> **"İstanbul Üniversitesi Mezun Kütüğü ve Kariyer Ağı"**
+  - *"Awwwards seviyesinde lider platform"* yerine -> **"Fakülteler ve Mezunlar Arası Resmi İletişim Platformu"**
+  - *"Hemen Başvur, Fırsatı Kaçırma"* yerine -> **"Başvuru İlet"**
+  - *"Ağa Katıl"* yerine -> **"Mezun Kaydı Oluştur"**

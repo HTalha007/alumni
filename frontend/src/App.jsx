@@ -125,7 +125,7 @@ export default function App() {
   }, [fetchHealth, fetchAlumni, fetchAnnouncements, fetchJobs]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-blue-600 selection:text-white font-sans antialiased">
+    <div className="min-h-screen bg-[#FAF9F6] text-[#161616] flex flex-col justify-between selection:bg-[#0F2942] selection:text-white font-sans antialiased">
       <Navbar
         activePage={activePage}
         setActivePage={navigateTo}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { IconX, IconBriefcase, IconCheck } from './Icons';
+import { IconX, IconCheck } from './Icons';
 
 export default function CreateJobModal({ isOpen, onClose, onSuccess, alumniList }) {
   const [formData, setFormData] = useState({
@@ -21,25 +20,23 @@ export default function CreateJobModal({ isOpen, onClose, onSuccess, alumniList 
     setSubmitting(true);
     setError(null);
 
-    // DDD Domain Doğrulamaları
+    // DDD Kuralları
     if (formData.title.length > 120) {
       setError('İlan başlığı en fazla 120 karakter olabilir (docs/ddd.md kuralı).');
       setSubmitting(false);
       return;
     }
     if (!formData.company.trim()) {
-      setError('Şirket adı zorunludur (docs/ddd.md kuralı).');
+      setError('Kurum / Şirket unvanı zorunludur (docs/ddd.md kuralı).');
       setSubmitting(false);
       return;
     }
 
     try {
-      // Backend /jobs/ Pydantic JobCreate (title, description, author_id) bekler
-      // Şirket ve şehir bilgilerini description ile zenginleştirerek saklıyoruz
       const fullDescription = [
-        `Şirket: ${formData.company}`,
-        formData.city ? `Şehir: ${formData.city}` : null,
-        formData.description ? `\nDetay:\n${formData.description}` : null
+        `Kurum: ${formData.company.trim()}`,
+        formData.city ? `Şehir: ${formData.city.trim()}` : null,
+        formData.description ? `\nPozisyon Detayı:\n${formData.description.trim()}` : null
       ].filter(Boolean).join('\n');
 
       const payload = {
@@ -64,7 +61,7 @@ export default function CreateJobModal({ isOpen, onClose, onSuccess, alumniList 
         onSuccess();
         onClose();
         setFormData({ title: '', company: '', city: '', description: '', author_id: '' });
-      }, 1500);
+      }, 1400);
     } catch (err) {
       setError(err.message || 'İlan kaydedilemedi.');
     } finally {
@@ -73,147 +70,129 @@ export default function CreateJobModal({ isOpen, onClose, onSuccess, alumniList 
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
-          onClick={onClose}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative z-10"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center">
-                <IconBriefcase className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Yeni Kariyer İlanı Yayınla</h3>
-                <p className="text-xs text-slate-400">İstanbul Üniversitesi mezun ve öğrencilerine açık pozisyon paylaşın.</p>
-              </div>
-            </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
-              <IconX className="w-5 h-5" />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[#161616]/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative bg-white border border-[#E2DFD7] rounded-sm w-full max-w-lg p-6 z-10">
+        <div className="flex justify-between items-start pb-3 mb-4 border-b border-[#E2DFD7]">
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#7C1D26] font-semibold">
+              İstihdam & Staj Talebi
+            </span>
+            <h3 className="font-serif text-xl font-bold text-[#161616]">
+              Yeni Kariyer İlanı Tanzimi
+            </h3>
           </div>
+          <button onClick={onClose} className="text-[#5A5854] hover:text-[#161616] p-1">
+            <IconX className="w-4 h-4" />
+          </button>
+        </div>
 
-          {success ? (
-            <div className="py-8 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
-                <IconCheck className="w-8 h-8" />
-              </div>
-              <h4 className="text-lg font-bold text-white">İlanınız Yayınlandı!</h4>
-              <p className="text-xs text-slate-400">Kariyer panosunda tüm mezunların başvurusuna açıldı.</p>
+        {success ? (
+          <div className="py-8 text-center space-y-2">
+            <div className="w-10 h-10 border border-[#1E4D2B] bg-[#1E4D2B]/10 text-[#1E4D2B] flex items-center justify-center mx-auto rounded-sm">
+              <IconCheck className="w-5 h-5" />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
-                  {error}
-                </div>
-              )}
+            <h4 className="font-serif text-base font-bold text-[#161616]">İlan Panoda Yayınlandı</h4>
+            <p className="text-xs text-[#5A5854]">Pozisyon başvurulara açıldı.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-2.5 bg-[#7C1D26]/10 border border-[#7C1D26]/20 text-[#7C1D26] text-xs font-mono">
+                {error}
+              </div>
+            )}
 
-              {/* Title (Max 120 char) */}
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs font-semibold text-[#161616]">Pozisyon / Görev Başlığı *</label>
+                <span className={`font-mono text-[11px] ${formData.title.length > 120 ? 'text-[#7C1D26] font-bold' : 'text-[#5A5854]'}`}>
+                  {formData.title.length}/120
+                </span>
+              </div>
+              <input
+                type="text"
+                required
+                maxLength={120}
+                placeholder="Örn: Hukuk Müşaviri / Veri Analisti"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs font-semibold text-slate-300">İlan Başlığı *</label>
-                  <span className={`text-[11px] ${formData.title.length > 120 ? 'text-rose-400 font-bold' : 'text-slate-500'}`}>
-                    {formData.title.length}/120
-                  </span>
-                </div>
+                <label className="block text-xs font-semibold text-[#161616] mb-1">Kurum / Şirket Adı *</label>
                 <input
                   type="text"
                   required
-                  maxLength={120}
-                  placeholder="Örn: Senior Frontend Developer (React / TypeScript)"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  placeholder="Örn: Türkiye İş Bankası"
+                  value={formData.company}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
                 />
               </div>
 
-              {/* Company & City */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Şirket Adı *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Örn: Getir / Trendyol"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Şehir (Opsiyonel)</label>
-                  <input
-                    type="text"
-                    placeholder="Örn: İstanbul (Hibrit)"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-              </div>
-
-              {/* Author ID selection */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">İlanı Açan Mezun *</label>
-                <select
-                  required
-                  value={formData.author_id}
-                  onChange={(e) => setFormData({ ...formData, author_id: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500"
-                >
-                  <option value="">İlan veren mezunu seçin...</option>
-                  {alumniList.map((alumnus) => (
-                    <option key={alumnus.id} value={alumnus.id}>
-                      {alumnus.name} (#{alumnus.id}) - {alumnus.title || alumnus.department}
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-xs font-semibold text-[#161616] mb-1">Şehir / Lokasyon</label>
+                <input
+                  type="text"
+                  placeholder="Örn: İstanbul (Levent)"
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm"
+                />
               </div>
+            </div>
 
-              {/* Description */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">İlan Detayı & Nitelikler (Opsiyonel)</label>
-                <textarea
-                  rows="3"
-                  placeholder="Aranan yetkinlikler, çalışma koşulları ve staj/iş imkanları..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-indigo-500 resize-none"
-                ></textarea>
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">İlan Veren Mezun Temsilcisi *</label>
+              <select
+                required
+                value={formData.author_id}
+                onChange={(e) => setFormData({ ...formData, author_id: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs text-[#161616] focus:outline-none focus:border-[#0F2942] rounded-sm"
+              >
+                <option value="">Mezun seçiniz...</option>
+                {alumniList.map((alumnus) => (
+                  <option key={alumnus.id} value={alumnus.id}>
+                    {alumnus.name} (Sicil #{alumnus.id}) &bull; {alumnus.title || alumnus.department}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
-                >
-                  Vazgeç
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-indigo-600/30"
-                >
-                  {submitting ? 'Yayınlanıyor...' : 'İlanı Yayınla'}
-                </button>
-              </div>
-            </form>
-          )}
-        </motion.div>
+            <div>
+              <label className="block text-xs font-semibold text-[#161616] mb-1">Aranan Nitelikler & Tanım</label>
+              <textarea
+                rows="3"
+                placeholder="Görev tanımı, aranan akademik ve mesleki kriterler..."
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 bg-white border border-[#E2DFD7] text-xs sm:text-sm text-[#161616] placeholder-[#5A5854] focus:outline-none focus:border-[#0F2942] rounded-sm resize-none"
+              ></textarea>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-3 border-t border-[#E2DFD7]">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-transparent text-[#5A5854] text-xs font-semibold hover:bg-[#F2F0EA] rounded-sm"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-5 py-2 bg-[#0F2942] hover:bg-[#183856] text-white text-xs font-semibold rounded-sm transition-colors"
+              >
+                {submitting ? 'Yayınlanıyor...' : 'İlanı Yayınla'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-    </AnimatePresence>
+    </div>
   );
 }
