@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import DirectoryPage from './pages/DirectoryPage';
+import AddAlumniModal from './components/AddAlumniModal';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
@@ -124,9 +126,25 @@ export default function App() {
             onOpenAddAlumni={() => setIsAddAlumniOpen(true)}
           />
         )}
+
+        {activePage === 'directory' && (
+          <DirectoryPage
+            alumniList={alumniList}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onOpenAddAlumni={() => setIsAddAlumniOpen(true)}
+            loading={false}
+          />
+        )}
       </main>
 
       <Footer aboutData={aboutData} setActivePage={navigateTo} />
+
+      <AddAlumniModal
+        isOpen={isAddAlumniOpen}
+        onClose={() => setIsAddAlumniOpen(false)}
+        onSuccess={fetchAlumni}
+      />
     </div>
   );
 }
