@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import DirectoryPage from './pages/DirectoryPage';
 import JobsPage from './pages/JobsPage';
 import AnnouncementsPage from './pages/AnnouncementsPage';
+import NotFoundPage from './pages/NotFoundPage';
 import AddAlumniModal from './components/AddAlumniModal';
 import CreateJobModal from './components/CreateJobModal';
 import ApplyJobModal from './components/ApplyJobModal';
@@ -171,6 +172,10 @@ export default function App() {
             loading={false}
             onOpenCreateAnnouncement={() => setIsCreateAnnouncementOpen(true)}
           />
+        )}
+
+        {activePage === 'notfound' && (
+          <NotFoundPage setActivePage={navigateTo} />
         )}
       </main>
 
