@@ -4,9 +4,11 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import DirectoryPage from './pages/DirectoryPage';
 import JobsPage from './pages/JobsPage';
+import AnnouncementsPage from './pages/AnnouncementsPage';
 import AddAlumniModal from './components/AddAlumniModal';
 import CreateJobModal from './components/CreateJobModal';
 import ApplyJobModal from './components/ApplyJobModal';
+import CreateAnnouncementModal from './components/CreateAnnouncementModal';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
@@ -23,6 +25,7 @@ export default function App() {
   // Modallar için state
   const [isAddAlumniOpen, setIsAddAlumniOpen] = useState(false);
   const [isCreateJobOpen, setIsCreateJobOpen] = useState(false);
+  const [isCreateAnnouncementOpen, setIsCreateAnnouncementOpen] = useState(false);
   const [applyModalData, setApplyModalData] = useState({
     isOpen: false,
     jobId: null,
@@ -161,6 +164,14 @@ export default function App() {
             onOpenApplyJob={handleOpenApplyJob}
           />
         )}
+
+        {activePage === 'announcements' && (
+          <AnnouncementsPage
+            announcements={announcements}
+            loading={false}
+            onOpenCreateAnnouncement={() => setIsCreateAnnouncementOpen(true)}
+          />
+        )}
       </main>
 
       <Footer aboutData={aboutData} setActivePage={navigateTo} />
@@ -184,6 +195,12 @@ export default function App() {
         jobId={applyModalData.jobId}
         jobTitle={applyModalData.jobTitle}
         alumniList={alumniList}
+      />
+
+      <CreateAnnouncementModal
+        isOpen={isCreateAnnouncementOpen}
+        onClose={() => setIsCreateAnnouncementOpen(false)}
+        onSuccess={fetchAnnouncements}
       />
     </div>
   );
