@@ -3,7 +3,10 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import DirectoryPage from './pages/DirectoryPage';
+import JobsPage from './pages/JobsPage';
 import AddAlumniModal from './components/AddAlumniModal';
+import CreateJobModal from './components/CreateJobModal';
+import ApplyJobModal from './components/ApplyJobModal';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
@@ -17,9 +20,22 @@ export default function App() {
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Modallar için placeholder state
+  // Modallar için state
   const [isAddAlumniOpen, setIsAddAlumniOpen] = useState(false);
   const [isCreateJobOpen, setIsCreateJobOpen] = useState(false);
+  const [applyModalData, setApplyModalData] = useState({
+    isOpen: false,
+    jobId: null,
+    jobTitle: ''
+  });
+
+  const handleOpenApplyJob = (jobId, jobTitle) => {
+    setApplyModalData({
+      isOpen: true,
+      jobId,
+      jobTitle
+    });
+  };
 
   // Tarayıcı URL takibi (History API)
   useEffect(() => {
@@ -136,6 +152,15 @@ export default function App() {
             loading={false}
           />
         )}
+
+        {activePage === 'jobs' && (
+          <JobsPage
+            jobs={jobs}
+            loading={false}
+            onOpenCreateJob={() => setIsCreateJobOpen(true)}
+            onOpenApplyJob={handleOpenApplyJob}
+          />
+        )}
       </main>
 
       <Footer aboutData={aboutData} setActivePage={navigateTo} />
@@ -144,6 +169,21 @@ export default function App() {
         isOpen={isAddAlumniOpen}
         onClose={() => setIsAddAlumniOpen(false)}
         onSuccess={fetchAlumni}
+      />
+
+      <CreateJobModal
+        isOpen={isCreateJobOpen}
+        onClose={() => setIsCreateJobOpen(false)}
+        alumniList={alumniList}
+        onSuccess={fetchJobs}
+      />
+
+      <ApplyJobModal
+        isOpen={applyModalData.isOpen}
+        onClose={() => setApplyModalData({ isOpen: false, jobId: null, jobTitle: '' })}
+        jobId={applyModalData.jobId}
+        jobTitle={applyModalData.jobTitle}
+        alumniList={alumniList}
       />
     </div>
   );
