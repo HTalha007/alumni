@@ -1,90 +1,92 @@
-from fastapi import APIRouter, HTTPException, status
-from typing import List
-from pydantic import BaseModel
-from models import UserCreate, UserUpdate
+from fastapi import APIRouter, HTTPException, status, Depends
+from typing import List, Optional
+from sqlalchemy.orm import Session
+from database import get_db
+from models import User, UserCreate, UserUpdate, UserResponse
 
 router = APIRouter()
 
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str | None = None
-    graduation_year: str | int | None = None
-    department: str | None = None
-    title: str | None = None
-
-
-fake_users_db = [
-    {
-        "id": 1,
-        "name": "Ahmet Yılmaz",
-        "email": "ahmet@alumni.istanbul.edu.tr",
-        "graduation_year": 2021,
-        "department": "Management Information Systems",
-        "title": "Software Engineer"
-    },
-    {
-        "id": 2,
-        "name": "Ayşe Kaya",
-        "email": "ayse@alumni.istanbul.edu.tr",
-        "graduation_year": 2023,
-        "department": "Computer Engineering",
-        "title": "Data Analyst"
-    }
-]
-
-
 @router.get("", response_model=List[UserResponse])
 @router.get("/", response_model=List[UserResponse], include_in_schema=False)
-def get_all_users():
-    return fake_users_db
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user_by_id(user_id: int):
-    user = next((u for u in fake_users_db if u["id"] == user_id), None)
+def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
     return user
 
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False)
-def create_user(user_in: UserCreate):
-    new_id = max((u["id"] for u in fake_users_db), default=0) + 1
-    new_user = {"id": new_id, **user_in.model_dump()}
-    fake_users_db.append(new_user)
+def create_user(user_in: UserCreate, db: Session = Depends(get_db)):
+    new_user = User(
+        name=user_in.name,
+        email=user_in.email,
+        department=user_in.department,
+        graduation_year=str(user_in.graduation_year),
+        title=user_in.title or "Mezun",
+        role=user_in.role or "alumni",
+        is_active=True
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
     return new_user
 
 
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user(user_id: int, user_in: UserCreate):
-    user_idx = next((i for i, u in enumerate(fake_users_db) if u["id"] == user_id), None)
-    if user_idx is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    updated_user = {"id": user_id, **user_in.model_dump()}
-    fake_users_db[user_idx] = updated_user
-    return updated_user
+def update_user(user_id: int, user_in: UserCreate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
+
+    user.name = user_in.name
+    user.email = user_in.email
+    user.department = user_in.department
+    user.graduation_year = str(user_in.graduation_year)
+    user.title = user_in.title
+    if user_in.role:
+        user.role = user_in.role
+
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 @router.patch("/{user_id}", response_model=UserResponse)
-def partial_update_user(user_id: int, user_in: UserUpdate):
-    user_idx = next((i for i, u in enumerate(fake_users_db) if u["id"] == user_id), None)
-    if user_idx is None:
-        raise HTTPException(status_code=404, detail="User not found")
+def partial_update_user(user_id: int, user_in: UserUpdate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
 
-    stored_user = fake_users_db[user_idx].copy()
-    update_data = user_in.model_dump(exclude_unset=True)
-    stored_user.update(update_data)
-    fake_users_db[user_idx] = stored_user
-    return stored_user
+    if user_in.name is not None:
+        user.name = user_in.name
+    if user_in.email is not None:
+        user.email = user_in.email
+    if user_in.department is not None:
+        user.department = user_in.department
+    if user_in.graduation_year is not None:
+        user.graduation_year = str(user_in.graduation_year)
+    if user_in.title is not None:
+        user.title = user_in.title
+    if user_in.role is not None:
+        user.role = user_in.role
+
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: int):
-    user_idx = next((i for i, u in enumerate(fake_users_db) if u["id"] == user_id), None)
-    if user_idx is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    fake_users_db.pop(user_idx)
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
+    db.delete(user)
+    db.commit()
     return None

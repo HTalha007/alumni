@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from routers import users, announcements, jobs
+from routers import users, announcements, jobs, auth, admin
 from database import SessionLocal, engine, Base
 from models import User, JobPosting, Application
 import time
@@ -142,6 +142,9 @@ def get_about():
     }
 
 
+app.include_router(auth.router, prefix="/api")
+app.include_router(auth.router, include_in_schema=False)
+app.include_router(admin.router, prefix="/api")
 app.include_router(users.router, prefix="/api/users", tags=["Users (API)"])
 app.include_router(announcements.router, prefix="/api/announcements", tags=["Announcements (API)"])
 app.include_router(users.router, prefix="/users", tags=["Users"], include_in_schema=False)
@@ -151,6 +154,8 @@ app.include_router(jobs.router, prefix="/api", include_in_schema=False)
 
 
 def seed_jobs_and_applications():
+    from seed import seed_data
+    seed_data()
     db = SessionLocal()
     try:
         first_user = db.query(User).first()

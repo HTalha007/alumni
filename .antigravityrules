@@ -1,0 +1,13 @@
+# Project Rules - Istanbul University Alumni Platform
+
+## Architecture & Boundaries
+- Monorepo structure: `backend/` (Python, FastAPI, SQLAlchemy, SQLite - MVC) and `frontend/` (React, Tailwind CSS).
+- Source of truth for domain rules: `docs/ddd.md`.
+- Do NOT break or remove existing backend middlewares in `backend/main.py` (Logger, 404 Guardian/Redirect to `/404`, 5xx Guardian, `logs/error.logs`).
+- API docs live at `/api/swagger`.
+
+## Frontend & Design Workflow
+- Follow the active Git branch's purpose strictly.
+- On the temporary homepage branch: build the homepage cleanly without referencing `brand.md` or `DESIGN.md`.
+- Once on `main` and after `brand.md` and `DESIGN.md` exist: treat them as the strict design system for every page redesign, working page-by-page.
+- Connect UI views to existing FastAPI endpoints (`/api/users`, `/api/announcements`, `/api/jobs` etc.) instead of inventing conflicting backend routes.
